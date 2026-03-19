@@ -19,22 +19,53 @@ public class StreamClient : MonoBehaviour
     [Header("Visualization")]
     public GameObject landmarkPrefab; 
     public float landmarkScale = 0.04f;
+    // Size of each landmark GameObject in Unity world space.
+    // Increase for better visibility, decrease if landmarks look too large.
     public float depthMultiplier = 10.0f; 
-    public Vector3 positionOffset = new Vector3(0, 0, -0.2f); // Offset to bring closer/push back
+    // Multiplies incoming depth values before applying them to Z.
+    // Increase this if forward/backward movement is too subtle.
+    // Decrease it if landmarks move too far in depth.
+    public Vector3 positionOffset = new Vector3(0, 0, -0.2f); 
+    // Global offset applied after XY/Z placement.
+    // Useful for moving the whole landmark set slightly forward/backward or sideways.
     public bool usePseudoDepth = true;
+    // Enables image-size-based heuristic depth adjustment.
+    // Disable this if you want to rely mainly on the depth module output.
     public float depthScale = 2.0f;
+    // Strength of pseudo-depth when usePseudoDepth is enabled.
+    // Increase to exaggerate image-size-based distance changes.
+    // Decrease if pseudo-depth interferes with the new depth module.
     public bool invertDepth = false;
-    public bool mirrorX = true; // Default to true for "Mirror" feel on webcam
+    // Inverts the pseudo-depth direction only.
+    // Turn this on if pseudo-depth moves objects in the wrong direction.
+    public bool mirrorX = true; 
+    // Mirrors X coordinates horizontally.
+    // Keep this on for webcam-style mirror behavior.
+    // Turn it off if you want true camera-space left/right behavior.
     public Transform visualizationRoot; 
     public QuadDisplay quadDisplay;
 
     //-----------------------------
     [Header("Depth-based XY Compensation")] 
     public bool useXYDepthCompensation = true;
+    // Enables depth-based XY scale compensation.
+    // Turn this on to reduce the apparent size change when the user moves closer/farther.
     public float xyDepthCompensationStrength = 1.0f;
+    // Controls how strongly XY spread is reduced as depth changes.
+    // Increase this if landmarks still grow too much when moving closer.
+    // Decrease this if the shape becomes too compressed.
+
     public bool useAbsGlobalDepthForCompensation = true;
+    // Uses the absolute value of global depth when computing XY compensation.
+    // Usually safer if depth sign may vary.
+    // Turn this off only if you explicitly want sign-dependent XY scaling behavior.
+
     public float xyCompensationMinScale = 0.2f;
+    // Minimum allowed XY compensation scale.
+    // Prevents landmarks from collapsing too much toward the center.
     public float xyCompensationMaxScale = 2.0f;
+    // Maximum allowed XY compensation scale.
+    // Usually keep this near 1.0 if the goal is only to shrink close-up spread.
     //-----------------------------
 
     private TcpClient socket;

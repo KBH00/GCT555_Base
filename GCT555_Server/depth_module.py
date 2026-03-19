@@ -10,21 +10,49 @@ import numpy as np
 class DepthConfig:
     # common
     smoothing_alpha: float = 0.20   # 0~1, larger values ​​reflect the latest value more strongly
+    # Controls how quickly depth follows new measurements.
+    # Higher values respond faster but may jitter more.
+    # Lower values are smoother but may feel delayed.
+
     clamp_min: float = -20.0
     clamp_max: float = 20.0
+    # Limits the depth range before sending to Unity.
+    # Widen the range if motion feels too compressed.
+    # Narrow the range if occasional outliers cause sudden jumps.
 
     # for Face 
     face_global_scale: float = 4.0      # tz scale
+    # Scales the face-level forward/backward motion derived from face pose tz.
+    # Increase this if the face does not move enough along the Z axis in Unity.
+    # Decrease it if the face moves too aggressively.
+
     face_local_scale: float = 0.05      # Scale relative to landmark z offset
+    # Scales per-landmark local facial depth variation (e.g. nose vs cheeks).
+    # Increase this to emphasize facial 3D shape.
+    # Decrease it if the face looks too distorted or noisy.
+
     face_invert_tz: bool = False        # True may be required depending on environment
+    # Inverts the sign of the face global depth.
+    # Turn this on if moving closer to the camera makes the landmarks move backward in Unity.
+
     face_invert_local_z: bool = False   # True may be required depending on environment
+    # Inverts the sign of per-landmark local face depth.
+    # Turn this on if facial convex parts (e.g. nose) appear pushed inward instead of outward.
 
     # for Pose / Hand 
     pose_invert_world_z: bool = False
-    hand_invert_world_z: bool = False
+    # Inverts pose world landmark Z values.
+    # Turn this on if pose depth moves in the opposite direction from what you expect.
 
-    # Decide whether to send raw along with debug on the server
+    hand_invert_world_z: bool = False
+    # Inverts hand world landmark Z values.
+    # Turn this on if hand depth moves backward when it should move forward.
+
+    # --- Debug output ---
     include_debug_raw: bool = True
+    # If enabled, keeps extra raw debug values available for inspection.
+    # Useful during tuning, but can be disabled later if no longer needed.
+
 
 
 def _clamp(v: float, lo: float, hi: float) -> float:
